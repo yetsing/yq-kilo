@@ -1,2 +1,2 @@
 # yq-kilo
-kilo text editor learn
+[kilo text editor](https://viewsourcecode.org/snaptoken/kilo/) learn

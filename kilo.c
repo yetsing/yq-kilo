@@ -272,6 +272,19 @@ void editorProcessKeypress() {
             write(STDOUT_FILENO, "\x1b[H", 3);
             exit(0);
             break;
+        case PAGE_UP:
+        case PAGE_DOWN:
+            {
+                int times = E.screenrows;
+                while (times--) {
+                    if (c == PAGE_UP) {
+                        editorMoveCursor(ARROW_UP);
+                    } else {
+                        editorMoveCursor(ARROW_DOWN);
+                    }
+                }
+            }
+            break;
 
         case ARROW_UP:
         case ARROW_DOWN:

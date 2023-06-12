@@ -20,6 +20,8 @@ enum editorKey {
     ARROW_RIGHT,
     ARROW_UP,
     ARROW_DOWN,
+    HOME_KEY,
+    END_KEY,
     PAGE_UP,
     PAGE_DOWN
 };
@@ -93,27 +95,38 @@ int editorReadKey() {
 
     // 读取转义字符序列 escape sequence
     if (c == '\x1b') {
+        // PgUp "\x1b[5~"
+        // PgDn "\x1b[6~"
+        // Home "\x1b[1~" "\x1b[7~" "\x1b[H" "\x1bOH"
+        // End  "\x1b[4~" "\x1b[8~" "\x1b[F" "\x1bOF"
+        // "\x1b[A" "\x1b[B" "\x1b[C" "\x1b[D" 对应上下右左四个方向键
         char seq[3];
 
         if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\x1b';
         if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
 
         if (seq[0] == '[') {
-            // PgUp \x1b[5~ PgDn \x1b[6~
             if (seq[1] >= '0' && seq[1] <= '9') {
                 if (read(STDIN_FILENO, &seq[2], 1) != 1) {
                     return '\x1b';
                 }
                 if (seq[2] == '~') {
                     switch (seq[1]) {
+                        case '1':
+                            return HOME_KEY;
+                        case '4':
+                            return END_KEY;
                         case '5':
                             return PAGE_UP;
                         case '6':
                             return PAGE_DOWN;
+                        case '7':
+                            return HOME_KEY;
+                        case '8':
+                            return END_KEY;
                     }
                 }
             } else {
-                // "\x1b[A" 对应上下右左四个方向键
                 switch (seq[1]) {
                     case 'A':
                         return ARROW_UP;
@@ -123,7 +136,18 @@ int editorReadKey() {
                         return ARROW_RIGHT;
                     case 'D':
                         return ARROW_LEFT;
+                    case 'H':
+                        return HOME_KEY;
+                    case 'F':
+                        return END_KEY;
                 }
+            }
+        } else if (seq[0] == 'O') {
+            switch (seq[1]) {
+                case 'H':
+                    return HOME_KEY;
+                case 'F':
+                    return END_KEY;
             }
         }
 
@@ -273,17 +297,16 @@ void editorProcessKeypress() {
             exit(0);
             break;
         case PAGE_UP:
-        case PAGE_DOWN:
-            {
-                int times = E.screenrows;
-                while (times--) {
-                    if (c == PAGE_UP) {
-                        editorMoveCursor(ARROW_UP);
-                    } else {
-                        editorMoveCursor(ARROW_DOWN);
-                    }
+        case PAGE_DOWN: {
+            int times = E.screenrows;
+            while (times--) {
+                if (c == PAGE_UP) {
+                    editorMoveCursor(ARROW_UP);
+                } else {
+                    editorMoveCursor(ARROW_DOWN);
                 }
             }
+        }
             break;
 
         case ARROW_UP:

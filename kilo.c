@@ -1,5 +1,9 @@
 /*** includes ***/
 
+#define _DEFAULT_SOURCE
+#define _BSD_SOURCE
+#define _GNU_SOURCE
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -212,6 +216,7 @@ void editorOpen(char *filename) {
     ssize_t linelen;
     linelen = getline(&line, &linecap, fp);
     if (linelen != -1) {
+        // 去掉后面的 \r 和 \n
         while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r')) {
             linelen--;
         }

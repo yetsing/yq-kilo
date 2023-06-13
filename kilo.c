@@ -383,6 +383,17 @@ void editorMoveCursor(int key) {
             }
             break;
     }
+
+    // 防止光标上下移动之后，导致 x 坐标大于所在行的长度
+    // 拿到光标移动之后的行文本数据
+    int rowlen = 0;
+    if (E.cy < E.numrows) {
+        row = &E.row[E.cy];
+        rowlen = row->size;
+    }
+    if (E.cx > rowlen) {
+        E.cx = rowlen;
+    }
 }
 
 void editorProcessKeypress() {

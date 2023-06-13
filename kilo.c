@@ -14,6 +14,10 @@
 #include <termios.h>
 #include <unistd.h>
 
+/*** log ***/
+
+FILE *fp;
+
 /*** defines ***/
 
 #define KILO_VERSION "0.0.1"
@@ -488,6 +492,13 @@ void editorProcessKeypress() {
 
         case PAGE_UP:
         case PAGE_DOWN: {
+            if (c == PAGE_UP) {
+                E.cy = E.rowoff;
+            } else if (c == PAGE_DOWN) {
+                // 将光标移动到画面的最后一行
+                E.cy = E.rowoff + E.screenrows - 1;
+                if (E.cy > E.numrows) E.cy = E.numrows;
+            }
             int times = E.screenrows;
             while (times--) {
                 if (c == PAGE_UP) {
@@ -525,6 +536,11 @@ void initEditor() {
 }
 
 int main(int argc, char *argv[]) {
+    fp = fopen("editor.log", "w");
+    if (fp == NULL) {
+        die("open log");
+    }
+
     enableRawMode();
     initEditor();
     if (argc >= 2) {

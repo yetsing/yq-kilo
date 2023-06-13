@@ -43,6 +43,11 @@ typedef struct erow {
 } erow;
 
 struct editorConfig {
+    /*
+     * 因为每个字符的宽度不一样，比如 tab 、中文等字符
+     * 这样在不同的字符的情况下，光标移动的距离就会不一样
+     * 所以需要分开记录坐标位置
+     */
     // 文本坐标位置
     int cx, cy;
     // 光标画面坐标位置
@@ -318,7 +323,10 @@ void abFree(struct abuf *ab) {
 /*** output ***/
 
 void editorScroll() {
-    E.rx = E.cx;
+    E.rx = 0;
+    if (E.cy < E.numrows) {
+        E.rx = editorRowCxToRx(&E.row[E.cy], E.cx);
+    }
 
     // 向上滚动
     if (E.cy < E.rowoff) {

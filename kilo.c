@@ -374,6 +374,10 @@ void editorMoveCursor(int key) {
         case ARROW_RIGHT:
             if (row && E.cx < row->size) {
                 E.cx++;
+            } else if (row && E.cx == row->size) {
+                // 光标在行末尾，按下 -> 键之后移动到下一行的开始
+                E.cy++;
+                E.cx = 0;
             }
             break;
         case ARROW_UP:

@@ -43,6 +43,8 @@ struct editorConfig {
     int cx, cy;
     // 行偏移，记录垂直滚动位置
     int rowoff;
+    // 列偏移，记录水平滚动位置
+    int coloff;
     int screenrows;
     int screencols;
     int numrows;
@@ -410,6 +412,7 @@ void initEditor() {
     E.cx = 0;
     E.cy = 0;
     E.rowoff = 0;
+    E.coloff = 0;
     E.numrows = 0;
     E.row = NULL;
 

@@ -365,6 +365,10 @@ void editorMoveCursor(int key) {
         case ARROW_LEFT:
             if (E.cx != 0) {
                 E.cx--;
+            } else if (E.cy > 0) {
+                // 光标在最左边，按下 <- 键之后移动到上一行的末尾
+                E.cy--;
+                E.cx = E.row[E.cy].size;
             }
             break;
         case ARROW_RIGHT:

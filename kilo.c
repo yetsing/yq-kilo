@@ -264,13 +264,21 @@ void abFree(struct abuf *ab) {
 /*** output ***/
 
 void editorScroll() {
+    // 向上滚动
     if (E.cy < E.rowoff) {
-        // 向上滚动
         E.rowoff = E.cy;
     }
+    // 向下滚动
     if (E.cy >= E.rowoff + E.screenrows) {
-        // 向下滚动
         E.rowoff = E.cy - E.screenrows + 1;
+    }
+    // 向左滚动
+    if (E.cx < E.coloff) {
+        E.coloff = E.cx;
+    }
+    // 向右滚动
+    if (E.cx >= E.coloff + E.screencols) {
+        E.coloff = E.cx - E.screencols + 1;
     }
 }
 

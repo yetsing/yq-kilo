@@ -387,9 +387,7 @@ void editorDrawRows(struct abuf *ab) {
         }
 
         abAppend(ab, "\x1b[K", 3);
-        if (y < E.screenrows - 1) {
-            abAppend(ab, "\r\n", 2);
-        }
+        abAppend(ab, "\r\n", 2);
     }
 }
 
@@ -535,6 +533,8 @@ void initEditor() {
     if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
         die("getWindowSize");
     }
+    // 最后一行展示状态信息
+    E.screenrows -= 1;
 }
 
 int main(int argc, char *argv[]) {

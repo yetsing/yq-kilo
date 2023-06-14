@@ -425,6 +425,8 @@ void editorDrawStatusBar(struct abuf *ab) {
     }
     // 使用正常文本
     abAppend(ab, "\x1b[m", 3);
+    // 移动到下一行，展示消息
+    abAppend(ab, "\r\n", 2);
 }
 
 void editorRefreshScreen() {
@@ -581,8 +583,8 @@ void initEditor() {
     if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
         die("getWindowSize");
     }
-    // 最后一行展示状态信息
-    E.screenrows -= 1;
+    // 最后 2 行展示状态信息
+    E.screenrows -= 2;
 }
 
 /*** log ***/

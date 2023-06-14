@@ -398,7 +398,7 @@ void editorDrawRows(struct abuf *ab) {
 void editorDrawStatusBar(struct abuf *ab) {
     // 给文本加上属性
     abAppend(ab, "\x1b[7m", 4);
-    char status[80];
+    char status[80], rstatus[80];
     char *filename = "[No Name]";
     if (E.filename != NULL) {
         filename = E.filename;
@@ -406,11 +406,18 @@ void editorDrawStatusBar(struct abuf *ab) {
     int len = snprintf(status, sizeof(status),
                        "%.20s - %d lines",
                        filename, E.numrows);
+    int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d",
+                        E.cy + 1, E.numrows);
     if (len > E.screencols) len = E.screencols;
     abAppend(ab, status, len);
     while (len < E.screencols) {
-        abAppend(ab, " ", 1);
-        len++;
+        if (E.screencols - len == rlen) {
+            abAppend(ab, rstatus, rlen);
+            break;
+        } else {
+            abAppend(ab, " ", 1);
+            len++;
+        }
     }
     // 使用正常文本
     abAppend(ab, "\x1b[m", 3);

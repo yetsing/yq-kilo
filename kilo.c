@@ -1,5 +1,7 @@
 /*** includes ***/
 
+// feature test macro
+// https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
 #define _DEFAULT_SOURCE
 #define _BSD_SOURCE
 #define _GNU_SOURCE
@@ -14,9 +16,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-/*** log ***/
-
-FILE *log_fp;
+#include "log.h"
 
 /*** defines ***/
 
@@ -555,12 +555,18 @@ void initEditor() {
     E.screenrows -= 1;
 }
 
-int main(int argc, char *argv[]) {
-    log_fp = fopen("editor.log", "w");
-    if (log_fp == NULL) {
-        die("open log");
+/*** log ***/
+void enableLog() {
+    FILE *fp = fopen("kilo.log", "a");
+    if (fp == NULL) {
+        die("open kilo.log");
     }
+    log_add_fp(fp, LOG_DEBUG);
+    log_set_quiet(true);
+}
 
+int main(int argc, char *argv[]) {
+    enableLog();
     enableRawMode();
     initEditor();
     if (argc >= 2) {

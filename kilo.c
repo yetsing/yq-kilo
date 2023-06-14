@@ -16,7 +16,7 @@
 
 /*** log ***/
 
-FILE *fp;
+FILE *log_fp;
 
 /*** defines ***/
 
@@ -64,6 +64,7 @@ struct editorConfig {
     int screencols;
     int numrows;
     erow *row;
+    char *filename;
     struct termios orig_termios;
 };
 
@@ -285,6 +286,9 @@ void editorAppendRow(char *s, size_t len) {
 /*** file i/o ***/
 
 void editorOpen(char *filename) {
+    free(E.filename);
+    E.filename = strdup(filename);
+
     FILE *fp = fopen(filename, "r");
     if (!fp) {
         die("fopen");
@@ -392,12 +396,14 @@ void editorDrawRows(struct abuf *ab) {
 }
 
 void editorDrawStatusBar(struct abuf *ab) {
+    // 给文本加上属性
     abAppend(ab, "\x1b[7m", 4);
     int len = 0;
     while (len < E.screencols) {
         abAppend(ab, " ", 1);
         len++;
     }
+    // 使用正常文本
     abAppend(ab, "\x1b[m", 3);
 }
 
@@ -540,6 +546,7 @@ void initEditor() {
     E.coloff = 0;
     E.numrows = 0;
     E.row = NULL;
+    E.filename = NULL;
 
     if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
         die("getWindowSize");
@@ -549,8 +556,8 @@ void initEditor() {
 }
 
 int main(int argc, char *argv[]) {
-    fp = fopen("editor.log", "w");
-    if (fp == NULL) {
+    log_fp = fopen("editor.log", "w");
+    if (log_fp == NULL) {
         die("open log");
     }
 

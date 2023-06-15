@@ -669,7 +669,12 @@ void editorProcessKeypress() {
         case BACKSPACE:
         case CTRL_KEY('h'):
         case DEL_KEY:
-            /* TODO */
+            if (c == DEL_KEY) {
+                // delete 删除光标后面的字符，
+                // 相当于向后移动光标，执行 backspace
+                editorMoveCursor(ARROW_RIGHT);
+            }
+            editorDelChar();
             break;
 
         case PAGE_UP:

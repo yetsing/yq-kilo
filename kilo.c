@@ -76,6 +76,10 @@ struct editorConfig {
 
 struct editorConfig E;
 
+/*** prototypes ***/
+
+void editorSetStatusMessage(const char *fmt, ...);
+
 /*** terminal ***/
 
 void die(const char *s) {
@@ -89,7 +93,7 @@ void die(const char *s) {
 void disableRawMode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1) {
         die("tcsetattr");
-    };
+    }
 }
 
 // terminal 一般处于 canonical model 也叫 cooked mode
@@ -97,7 +101,7 @@ void disableRawMode() {
 void enableRawMode() {
     if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) {
         die("tcgetattr");
-    };
+    }
     atexit(disableRawMode);
 
     struct termios raw = E.orig_termios;
@@ -120,7 +124,7 @@ void enableRawMode() {
 
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
         die("tcsetattr");
-    };
+    }
 }
 
 int editorReadKey() {
@@ -367,6 +371,7 @@ void editorSave() {
             if (write(fd, buf, len) == len) {
                 close(fd);
                 free(buf);
+                editorSetStatusMessage("%d bytes written to disk", len);
                 return;
             }
         }
@@ -374,6 +379,7 @@ void editorSave() {
     }
 
     free(buf);
+    editorSetStatusMessage("Can't save! I/O error: %s", strerror(errno));
 }
 
 /*** append buffer ***/
@@ -701,7 +707,7 @@ int main(int argc, char *argv[]) {
         editorOpen(argv[1]);
     }
 
-    editorSetStatusMessage("HELP: Ctrl-Q = quit");
+    editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit");
 
     while (1) {
         editorRefreshScreen();

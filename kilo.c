@@ -642,8 +642,13 @@ char *editorPrompt(char *prompt) {
     while (1) {
         editorSetStatusMessage(prompt, buf);
         editorRefreshScreen();
+
         int c = editorReadKey();
-        if (c == ENTER_KEY) {
+        if (c == '\x1b') {
+            editorSetStatusMessage("");
+            free(buf);
+            return NULL;
+        } else if (c == ENTER_KEY) {
             if (buflen != 0) {
                 editorSetStatusMessage("");
                 return buf;

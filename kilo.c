@@ -311,7 +311,7 @@ void editorRowDelChar(erow *row, int at) {
     if (at < 0 || at >= row->size) {
         return;
     }
-    memmove(&row->chars[at], &row->chars[at+1], row->size - at);
+    memmove(&row->chars[at], &row->chars[at + 1], row->size - at);
     row->size--;
     editorUpdateRow(row);
     E.dirty++;
@@ -326,6 +326,19 @@ void editorInsertChar(int c) {
     editorRowInsertChar(&E.row[E.cy], E.cx, c);
     // 将光标往后移动，放在插入的字符后面
     E.cx++;
+}
+
+void editorDelChar() {
+    if (E.cy == E.numrows) {
+        return;
+    }
+
+    erow *row = &E.row[E.cy];
+    if (E.cx > 0) {
+        editorRowDelChar(row, E.cx - 1);
+        // 将光标向前移动，放在删除的字符前面
+        E.cx--;
+    }
 }
 
 /*** file i/o ***/

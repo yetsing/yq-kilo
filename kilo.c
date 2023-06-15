@@ -298,11 +298,13 @@ void editorRowInsertChar(erow *row, int at, int c) {
 }
 
 /*** editor operations ***/
+
 void editorInsertChar(int c) {
     if (E.cy == E.numrows) {
         editorAppendRow("", 0);
     }
     editorRowInsertChar(&E.row[E.cy], E.cx, c);
+    // 将光标往后移动，放在插入的字符后面
     E.cx++;
 }
 

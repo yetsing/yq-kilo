@@ -29,6 +29,8 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
+#define ENTER_KEY '\r'
+
 enum editorKey {
     BACKSPACE = 127,
     ARROW_LEFT = 1000,
@@ -639,7 +641,7 @@ char *editorPrompt(char *prompt) {
         editorSetStatusMessage(prompt, buf);
         editorRefreshScreen();
         int c = editorReadKey();
-        if (c == '\r') {
+        if (c == ENTER_KEY) {
             if (buflen != 0) {
                 editorSetStatusMessage("");
                 return buf;
@@ -711,7 +713,7 @@ void editorProcessKeypress() {
     int c = editorReadKey();
 
     switch (c) {
-        case '\r':
+        case ENTER_KEY:
             editorInsertNewline();
             break;
 
